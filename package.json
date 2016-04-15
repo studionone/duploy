@@ -1,0 +1,15 @@
+{
+  "name": "duploy",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/duploy.js",
+  "scripts": {
+    "build": "npm run clean && npm run purescript && npm run compile",
+    "clean": "rm -rf build && mkdir -p build",
+    "compile": "enclose duploy.js -o build/duploy",
+    "purescript": "pulp build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Josh Girvin <josh@jgirvin.com> (http://jgirvin.com)",
+  "license": "MIT"
+}
