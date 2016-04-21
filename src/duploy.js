@@ -1,12 +1,10 @@
 /**
  * Duploy node-based CLI for docker deployment automation
  */
-'use strict';
+'use strict'
 
-const net = require('net')
-const os = require('os')
-const url = require('url')
 const R = require('ramda')
+const url = require('url')
 
 // doc: Check unix or tcp
 const isUnix = (str) => /^unix$/.exec(str) !== null

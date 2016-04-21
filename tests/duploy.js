@@ -1,3 +1,4 @@
+'use strict'
 const test = require('tapes')
 const parseDockerHost = require('../src/duploy').parseDockerHost
 
