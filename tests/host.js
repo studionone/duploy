@@ -1,8 +1,9 @@
 'use strict'
-const test = require('tapes')
-const parseDockerHost = require('../src/duploy').parseDockerHost
 
+const test              = require('tapes')
+const parseDockerHost   = require('../src/host')
 
+// doc: Unit is used to parse DOCKER_HOST env var
 test('parseDockerHost', (t) => {
     t.test('removes colon from type', (t) => {
         const res1 = parseDockerHost('tcp://example.com/')

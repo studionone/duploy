@@ -8,6 +8,9 @@ const net = require('net')
 
 let docker = module.exports = {}
 
+/**
+ * Top-level protocol-aware wrapper around net socket communication
+ */
 docker.connect = (host) => {
     host = R.defaultTo({})(host)
     const type = R.prop('type')
@@ -24,12 +27,16 @@ docker.connect = (host) => {
     throw new Error('Invalid DOCKER_HOST type')
 }
 
-// doc: Connects to TCP socket
+/**
+ * TCP-specific connection to Docker socket
+ */
 docker.connectTcp = (host) => {
 
 }
 
-// doc: Connects to Unix socket
+/**
+ * Unix-specific connection to Docker socket
+ */
 docker.connectUnix = (host) => {
 
 }
