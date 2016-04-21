@@ -3,7 +3,7 @@
  */
 'use strict'
 
-const R = require('ramda')
+const R = require('ramda-maybe')
 const net = require('net')
 
 let docker = module.exports = {}

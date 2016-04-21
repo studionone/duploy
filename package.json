@@ -18,6 +18,8 @@
   },
   "dependencies": {
     "ramda": "^0.21.0",
+    "ramda-fantasy": "^0.4.1",
+    "ramda-maybe": "^0.18.0",
     "tap-spec": "^4.1.1"
   }
 }

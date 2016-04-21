@@ -13,7 +13,9 @@ const compile = enclose.exec
 const windows = (platform === 'win32')
 const exe = windows ? '.exe' : ''
 if (arch === 'x64') flags.push('--x64')
+let suff = '-DEV'
+if (process.env.NODE_ENV === 'production') suff = ''
 
-flags.push('--output', './build/duploy' + exe)
+flags.push('--output', './build/duploy' + suff + exe)
 flags.push('./src/duploy.js')
 compile(flags)

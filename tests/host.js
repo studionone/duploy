@@ -32,5 +32,15 @@ test('parseDockerHost', (t) => {
         t.end()
     })
 
+    t.test('testing broken path', (t) => {
+        try {
+            const res = parseDockerHost('a')
+        } catch (e) {
+            t.equal(e.message, 'Invalid protocol in DOCKER_HOST',
+                'should be the right error')
+        }
+        t.end()
+    })
+
     t.end()
 })
