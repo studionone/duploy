@@ -31,12 +31,12 @@ docker.connect = (host) => {
  * TCP-specific connection to Docker socket
  */
 docker.connectTcp = (host) => {
-
+    console.log('Connecting to TCP socket...')
 }
 
 /**
  * Unix-specific connection to Docker socket
  */
 docker.connectUnix = (host) => {
-
+    console.log('Connecting to POSIX socket...')
 }
