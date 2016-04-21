@@ -1,18 +1,21 @@
 {
-  "name": "duploy",
+  "name": "duploy.js",
   "version": "1.0.0",
   "description": "",
   "main": "src/duploy.js",
   "scripts": {
-    "build": "npm run clean && npm run purescript && npm run compile",
-    "clean": "rm -rf build && mkdir -p build",
-    "compile": "enclose duploy.js -o build/duploy",
-    "purescript": "pulp build",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "tapes tests/**/*.js | tap-spec"
   },
   "author": "Josh Girvin <josh@jgirvin.com> (http://jgirvin.com)",
-  "license": "MIT",
+  "license": "ISC",
+  "devDependencies": {
+    "enclose": "^2.0.1",
+    "proxyquire": "^1.7.4",
+    "simple-mock": "^0.7.0",
+    "tapes": "^3.1.0"
+  },
   "dependencies": {
-    "yargs": "^4.6.0"
+    "ramda": "^0.21.0",
+    "tap-spec": "^4.1.1"
   }
 }
