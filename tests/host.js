@@ -36,7 +36,7 @@ test('parseDockerHost', (t) => {
         try {
             const res = parseDockerHost('a')
         } catch (e) {
-            t.equal(e.message, 'Invalid protocol in DOCKER_HOST',
+            t.equal(e.message, 'Unsupported protocol in DOCKER_HOST',
                 'should be the right error')
         }
         t.end()

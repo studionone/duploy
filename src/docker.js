@@ -15,11 +15,11 @@ docker.connect = (host) => {
     host = R.defaultTo({})(host)
     const type = R.prop('type')
 
-    if (type(host) === 'unix') {
+    if (type(host).value === 'unix') {
         return docker.connectUnix(host)
     }
 
-    if (type(host) === 'tcp') {
+    if (type(host).value === 'tcp') {
         return docker.connectTcp(host)
     }
 
