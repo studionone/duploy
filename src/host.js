@@ -22,10 +22,6 @@ class Host {
                 [R.isNil, () => { throw new Error('No protocol specified in DOCKER_HOST') }],
                 [R.T, R.identity]
             ])).value
-        //
-        // if (this.type === 'tcp') {
-        //     this.port = R.prop('port')(parsed).getOrElse('2375')
-        // }
 
         // Set the host value for Unix or TCP
         this.host = R.cond([
