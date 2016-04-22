@@ -3,36 +3,75 @@
  */
 'use strict'
 
-const R = require('ramda-maybe')
-const net = require('net')
+const R         = require('ramda-maybe')
+const Future    = require('ramda-fantasy').Future
+const net       = require('net')
+const query     = require('querystring')
 
+/**
+ * Docker module wrapper
+ */
 let docker = module.exports = {}
 
 /**
  * Top-level protocol-aware wrapper around net socket communication
  */
-docker.connect = (host) => {
-    host = R.defaultTo({})(host)
-    const type = R.prop('type')
-
-    // Delegate out to other methods, throw if its not the right type
-    return R.cond([
-        [R.propEq('type', 'unix'), () => docker.connectUnix(host)],
-        [R.propEq('type', 'tcp'), () => docker.connectTcp(host)],
+docker.connect = (host) => R.pipe(
+    R.defaultTo({}),
+    R.cond([
+        [R.propEq('type', 'unix'), docker.connectUnix],
+        [R.propEq('type', 'tcp'), docker.connectTcp],
         [R.T, () => { throw new Error('Invalid DOCKER_HOST type') }]
-    ])(host)
-}
+    ])
+)(host)
 
-/**
- * TCP-specific connection to Docker socket
- */
+// doc: TCP-specific connection to Docker socket
 docker.connectTcp = (host) => {
-    console.log('Connecting to TCP socket...')
+    host = R.compose(
+        R.fromPairs,
+        R.zip(['host', 'port']),
+        R.split(':')
+    )(host.host)
+
+    return net.connect(+host.port, host.host)
 }
 
-/**
- * Unix-specific connection to Docker socket
- */
-docker.connectUnix = (host) => {
-    console.log('Connecting to POSIX socket...')
+// doc: Unix-specific connection to Docker socket
+docker.connectUnix = (host) => net.connect({ path: host.host })
+
+// doc: Decorate the client with given event listeners
+docker.decorateClient = (client, methods) => {
+    // doc: Method is a k=>v pair of event name and callback (as [0] and [1])
+    const bindEventListeners = (method) => client.on(method[0], method[1])
+
+    const decorate = R.pipe(
+        R.defaultTo({}),
+        R.toPairs,
+        R.map(bindEventListeners)
+    )
+
+    return decorate(methods)
+}
+
+// doc: Builds a request string for our
+docker.buildRequest = (method, endpoint, data) => {
+    method = R.defaultTo('get')(method)
+    endpoint = R.defaultTo('/')(endpoint)
+    data = R.defaultTo(null)(data)
+
+    return `${method.toUpperCase()} ${endpoint} HTTP/1.0\r\n\n`
+}
+
+// doc: Sends a request to the Docker socket and returns a Future
+docker.sendRequest = (client, method, endpoint) => {
+    return Future((reject, resolve) => {
+        let buf = ''
+        docker.decorateClient(client, {
+            data: (chunk) => buf += chunk.toString(),
+            close: () => resolve(buf),
+            error: (err) => reject(err),
+        })
+        // Send the request
+        client.write(docker.buildRequest(method, endpoint))
+    })
 }

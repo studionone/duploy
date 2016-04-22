@@ -3,9 +3,9 @@
  */
 'use strict'
 
-const R = require('ramda-maybe')
+const R     = require('ramda-maybe')
 const Maybe = require('ramda-fantasy').Maybe
-const url = require('url')
+const url   = require('url')
 
 // doc: Check unix or tcp
 const replace = R.curry((k, r, obj) => obj !== null ? Maybe.Just(R.replace(k, r, obj)) : Maybe.Nothing())
@@ -18,11 +18,14 @@ class Host {
         // Set the type or throw if protocol is undefined
         this.type = R.prop('protocol', parsed)
             .chain(replace(':', ''))
-            .map(R.ifElse(
-                R.isNil,
-                (v) => { throw new Error('No protocol specified in DOCKER_HOST') },
-                R.identity
-            )).value
+            .map(R.cond([
+                [R.isNil, () => { throw new Error('No protocol specified in DOCKER_HOST') }],
+                [R.T, R.identity]
+            ])).value
+        //
+        // if (this.type === 'tcp') {
+        //     this.port = R.prop('port')(parsed).getOrElse('2375')
+        // }
 
         // Set the host value for Unix or TCP
         this.host = R.cond([
