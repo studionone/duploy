@@ -15,16 +15,12 @@ docker.connect = (host) => {
     host = R.defaultTo({})(host)
     const type = R.prop('type')
 
-    if (type(host).value === 'unix') {
-        return docker.connectUnix(host)
-    }
-
-    if (type(host).value === 'tcp') {
-        return docker.connectTcp(host)
-    }
-
-    // We only handle TCP/Unix sockets, nothing else at the moment
-    throw new Error('Invalid DOCKER_HOST type')
+    // Delegate out to other methods, throw if its not the right type
+    return R.cond([
+        [R.propEq('type', 'unix'), () => docker.connectUnix(host)],
+        [R.propEq('type', 'tcp'), () => docker.connectTcp(host)],
+        [R.T, () => { throw new Error('Invalid DOCKER_HOST type') }]
+    ])(host)
 }
 
 /**
