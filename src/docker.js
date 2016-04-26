@@ -87,7 +87,7 @@ docker.parseResponse = (request) => {
     const requestString = request.toString()
     const parsed = parser.parseResponse(requestString)
 
-    const props = R.props([
+    const getProps = R.props([
         'protocolVersion',
         'statusCode',
         'statusMessage',
@@ -106,5 +106,5 @@ docker.parseResponse = (request) => {
         anyPropsAreNothing,
         () => Either.Left(new Error())
         () => Either.Right(parsed)
-    )(props(parsed))
+    )(getProps(parsed))
 }
