@@ -5,22 +5,22 @@ const proxyquire    = require('proxyquire')
 const simple        = require('simple-mock')
 
 // doc: Testing the docker.connect abstraction
-test('docker.connect', (t) => {
+test('docker.connect', t => {
     let docker, netStub
 
-    t.beforeEach((t) => {
+    t.beforeEach(t => {
         netStub = {
             connect: simple.stub(),
         }
         t.end()
     })
 
-    t.afterEach((t) => {
+    t.afterEach(t => {
         simple.restore()
         t.end()
     })
 
-    t.test('call with nothing defaults to empty object and throws', (t) => {
+    t.test('call with nothing defaults to empty object and throws', t => {
         // doc: Setup our stubs
         docker = proxyquire('../src/docker', {
             net: netStub
@@ -38,7 +38,7 @@ test('docker.connect', (t) => {
         t.end()
     })
 
-    t.test('call with TCP hands off to connectTcp', (t) => {
+    t.test('call with TCP hands off to connectTcp', t => {
         // doc: Setup our stubs
         docker = proxyquire('../src/docker', {
             net: netStub
@@ -63,7 +63,7 @@ test('docker.connect', (t) => {
         t.end()
     })
 
-    t.test('call with Unix hands off to connectUnix', (t) => {
+    t.test('call with Unix hands off to connectUnix', t => {
         // doc: Setup our stubs
         docker = proxyquire('../src/docker', {
             net: netStub
