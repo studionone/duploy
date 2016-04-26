@@ -83,7 +83,7 @@ docker.sendRequest = (client, method, endpoint) => {
 // Parses a request from a Future
 // FIXME: Check this type signature, doesn't seem correct?
 // parseRequest :: Buffer -> Either (e :: Error, a :: Object)
-docker.parseRequest = (request) => {
+docker.parseResponse = (request) => {
     const requestString = request.toString()
     const parsed = parser.parseResponse(requestString)
 
