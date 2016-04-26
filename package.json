@@ -15,8 +15,8 @@
     "enclose": "^2.0.1",
     "proxyquire": "^1.7.4",
     "simple-mock": "^0.7.0",
-    "tapes": "^3.1.0",
-    "tap-spec": "^4.1.1"
+    "tap-spec": "^4.1.1",
+    "tapes": "^3.1.0"
   },
   "dependencies": {
     "http-string-parser": "0.0.5",

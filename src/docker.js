@@ -11,7 +11,7 @@ const query     = require('querystring')
 /**
  * Docker module wrapper
  */
-let docker = module.exports = {}
+let docker = exports
 
 /**
  * Top-level protocol-aware wrapper around net socket communication

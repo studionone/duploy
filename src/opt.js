@@ -1,7 +1,17 @@
+/**
+ * Functional option/command parser for CLI arguments
+ */
 'use strict'
 
-const R         = require('ramda')
-const Either    = require('ramda-fantasy').Either
+const R                 = require('ramda')
+const Either            = require('ramda-fantasy').Either
+const NoArgumentError   = require('./exceptions').Opt.NoArgumentError
+const NoMatchError      = require('./exceptions').Opt.NoMatchError
+
+/**
+ * Top-level module wrapper
+ */
+let opt = exports
 
 // doc: Matches defined via a thunk so we don't execute the curried functions
 const matches = () => [
@@ -12,8 +22,8 @@ const matches = () => [
 
 // Used for matching given command-line arguments to functions, via the Maybe
 // monad and the R.cond pattern-matching function
-//:: Array String -> Either Error ()
-const parseOpt = (argv) => {
+// parseOpt :: Array String -> Either Error ()
+opt.parseOpt = (argv) => {
     // doc: Set our argv to always have a string
     if (argv.length < 2) argv = [argv[0], '']
 
@@ -25,17 +35,4 @@ const parseOpt = (argv) => {
         R.toLower,
         R.trim
     )(argv[1])
-}
-
-// doc: Error classes for parseOpt Either.Left
-class NoMatchError extends Error {}
-class NoArgumentError extends Error {}
-
-// doc: Static module exports
-module.exports = {
-    parseOpt,
-
-    // doc: Export the error classes for R.is checks
-    NoMatchError,
-    NoArgumentError
 }

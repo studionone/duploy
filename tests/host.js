@@ -1,7 +1,7 @@
 'use strict'
 
 const test              = require('tapes')
-const parseDockerHost   = require('../src/host')
+const parseDockerHost   = require('../src/host').parseDockerHost
 
 // doc: Unit is used to parse DOCKER_HOST env var
 test('parseDockerHost', (t) => {
