@@ -7,18 +7,19 @@ const R             = require('ramda')
 const Either        = require('ramda-fantasy').Either
 
 // Unit under test
-const parseOpt      = require('../src/opt')
+const opt      = require('../src/opt')
+const parseOpt = opt.parseOpt
 
 test('parseOpt', t => {
     // testing out default
-    t.test('default gives Either.Left(Error)', (t) => {
+    t.test('default gives Either.Left(NoArgumentError)', (t) => {
         const argv = ['./duploy']
         const result = parseOpt(argv)
 
         t.equal(Either.isLeft(result), true,
-            'result should be an Either.Left(Error)')
-        t.equal(R.is(Error, result.value), true,
-            'result.value should be an Error')
+            'result should be an Either.Left(NoArgumentError)')
+        t.equal(R.is(opt.NoArgumentError, result.value), true,
+            'result.value should be a NoArgumentError')
         t.end()
     })
 
