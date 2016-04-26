@@ -1,7 +1,10 @@
 'use strict'
 
-const test              = require('tapes')
+const test              = require('../ramda-tapes')
+const addAssertions     = require('extend-tape')
 const parseDockerHost   = require('../src/host').parseDockerHost
+const R                 = require('ramda')
+const Either            = require('ramda-fantasy').Either
 
 // doc: Unit is used to parse DOCKER_HOST env var
 test('parseDockerHost', (t) => {
@@ -9,17 +12,19 @@ test('parseDockerHost', (t) => {
         const res1 = parseDockerHost('tcp://example.com/')
         const res2 = parseDockerHost()
 
-        t.equal(res1.type, 'tcp',
+        t.equal(res1.value.type, 'tcp',
             'sets type to tcp without colon')
-        t.equal(res2.type, 'unix',
+        t.isEitherRight(res1, 'Should be an Either.Right')
+        t.equal(res2.value.type, 'unix',
             'sets type to unix without colon')
+        t.isEitherRight(res2, 'Should be an Either.Right')
         t.end()
     })
 
     t.test('pulls out host correctly for unix type', (t) => {
         const res = parseDockerHost()
 
-        t.equal(res.host, '/var/run/docker.sock',
+        t.equal(res.value.host, '/var/run/docker.sock',
             'docker.sock from pathname instead of hostname')
         t.end()
     })
@@ -27,18 +32,20 @@ test('parseDockerHost', (t) => {
     t.test('pulls out host correctly for tcp type', (t) => {
         const res = parseDockerHost('tcp://example.com')
 
-        t.equal(res.host, 'example.com',
+        t.equal(res.value.host, 'example.com',
             'example.com from hostname instead of pathname')
         t.end()
     })
 
     t.test('testing broken path', (t) => {
-        try {
-            const res = parseDockerHost('a')
-        } catch (e) {
-            t.equal(e.message, 'Unsupported protocol in DOCKER_HOST',
-                'should be the right error')
-        }
+        const res = parseDockerHost('a')
+
+        t.equal(Either.isLeft(res), true,
+            'returns an Either.Left(Error)')
+        t.equal(res.value.message, 'Unsupported protocol in DOCKER_HOST',
+            'should have the correct error message')
+        t.is(res.value, Error,
+            'should be an Error object')
         t.end()
     })
 

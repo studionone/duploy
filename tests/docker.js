@@ -1,6 +1,6 @@
 'use strict'
 
-const test          = require('tapes')
+const test          = require('../ramda-tapes')
 const proxyquire    = require('proxyquire')
 const simple        = require('simple-mock')
 
