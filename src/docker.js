@@ -4,9 +4,10 @@
 'use strict'
 
 const R         = require('ramda-maybe')
+const List      = require('../lib/list')
 const Future    = require('ramda-fantasy').Future
 const Either    = require('ramda-fantasy').Either
-const IO        = require('ramda-fantasy').IO
+const Maybe     = require('ramda-fantast').Maybe
 const net       = require('net')
 const query     = require('querystring')
 const parser    = require('http-string-parser')
@@ -81,7 +82,28 @@ docker.sendRequest = (client, method, endpoint) => {
 
 // Parses a request from a Future
 // FIXME: Check this type signature, doesn't seem correct?
-// parseRequest :: String -> Either (e :: Error, a :: Object)
+// parseRequest :: Buffer -> Either (e :: Error, a :: Object)
 docker.parseRequest = (request) => {
+    const requestString = request.toString()
+    const parsed = parser.parseResponse(requestString)
 
+    const props = R.props([
+        'protocolVersion',
+        'statusCode',
+        'statusMessage',
+        'headers',
+        'body'
+    ]).map(R.cond([
+        [R.isNil, Maybe.Nothing],
+        [R.isEmpty, Maybe.Nothing],
+        [R.T, Maybe.Just]
+    ]))
+
+    // anyPropsAreNothing :: [a] -> Bool
+    const anyPropsAreNothing = v => List.of(...v).any(p => p.isNothing)
+
+    return R.cond([
+        [anyPropsAreNothing, Either.Left(Error())],
+        [R.T, () => Either.Right(parsed)]
+    ])(props)
 }
