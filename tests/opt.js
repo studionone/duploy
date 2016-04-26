@@ -13,7 +13,7 @@ const Exceptions    = require('../src/exceptions').Opt
 
 test('parseOpt', t => {
     // testing out default
-    t.test('default gives Either.Left(NoArgumentError)', (t) => {
+    t.test('default gives Either.Left(NoArgumentError)', t => {
         const argv = ['./duploy']
         const result = parseOpt(argv)
 
@@ -25,7 +25,7 @@ test('parseOpt', t => {
     })
 
     // testing out `asdf` gives a NoMatchError
-    t.test('"asdf" gives Either.Left(NoMatchError)', (t) => {
+    t.test('"asdf" gives Either.Left(NoMatchError)', t => {
         const argv = ['./duploy', 'asdf']
         const result = parseOpt(argv)
 
@@ -37,7 +37,7 @@ test('parseOpt', t => {
     })
 
     // testing out `init` works correctly
-    t.test('"init" gives Either.Right(\'init\')', (t) => {
+    t.test('"init" gives Either.Right(\'init\')', t => {
         const argv = ['./duploy', 'init']
         const result = parseOpt(argv)
 
@@ -49,7 +49,7 @@ test('parseOpt', t => {
     })
 
     // testing out `init` with whitespace works correctly
-    t.test('"init  " gives Either.Right(\'init\')', (t) => {
+    t.test('"init  " gives Either.Right(\'init\')', t => {
         const argv = ['./duploy', 'init  ']
         const result = parseOpt(argv)
 

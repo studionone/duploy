@@ -16,18 +16,34 @@ const test = addAssertions(tape, {
     },
 
     isEitherLeft(instance, message) {
-        if (R.match(/^Either/, instance.toString())) {
+        if (R.test(/^Either/, R.toString(instance))) {
             this.equal(instance.isLeft, true, message)
         } else {
-            this.fail('Value must be an instance of Either')
+            this.fail(`Value must be an instance of Either: ${instance.constructor.name} given`)
         }
     },
 
     isEitherRight(instance, message) {
-        if (R.match(/^Either/, instance.toString())) {
+        if (R.test(/^Either/, R.toString(instance))) {
             this.equal(instance.isRight, true, message)
         } else {
-            this.fail('Value must be an instance of Either')
+            this.fail(`Value must be an instance of Either: ${instance.constructor.name} given`)
+        }
+    },
+
+    isMaybeJust(instance, message) {
+        if (R.test(/^Maybe/), R.toString(instance)) {
+            this.equal(instance.isJust, true, message)
+        } else {
+            this.fail(`Value must be an instance of Maybe: ${instance.constructor.name} given`)
+        }
+    },
+
+    isMaybeNothing(instance, message) {
+        if (R.test(/^Maybe/), R.toString(instance)) {
+            this.equal(instance.isNothing, true, message)
+        } else {
+            this.fail(`Value must be an instance of Maybe: ${instance.constructor.name} given`)
         }
     },
 })
