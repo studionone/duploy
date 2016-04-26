@@ -15,9 +15,9 @@ test('parseOpt', t => {
         const argv = ['./duploy']
         const result = parseOpt(argv)
 
-        t.ok(Either.isLeft(result),
+        t.equal(Either.isLeft(result), true,
             'result should be an Either.Left(Error)')
-        t.ok(R.is(Error, result.value),
+        t.equal(R.is(Error, result.value), true,
             'result.value should be an Error')
         t.end()
     })
@@ -27,7 +27,7 @@ test('parseOpt', t => {
         const argv = ['./duploy', 'init']
         const result = parseOpt(argv)
 
-        t.ok(Either.isRight(result),
+        t.equal(Either.isRight(result), true,
             'result should be Either.Right')
         t.equal(result.value, 'init',
             'result should have init as its Either.Right value')
@@ -39,7 +39,7 @@ test('parseOpt', t => {
         const argv = ['./duploy', 'init  ']
         const result = parseOpt(argv)
 
-        t.ok(Either.Right(result),
+        t.equal(Either.isRight(result), true,
             'result should be Either.Right')
         t.equal(result.value, 'init',
             'result should have init as its Either.Right value')
