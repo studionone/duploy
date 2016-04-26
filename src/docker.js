@@ -102,8 +102,9 @@ docker.parseResponse = (request) => {
     // anyPropsAreNothing :: [a] -> Bool
     const anyPropsAreNothing = v => List.of(...v).any(p => p.isNothing)
 
-    return R.cond([
-        [anyPropsAreNothing, Either.Left(Error())],
-        [R.T, () => Either.Right(parsed)]
-    ])(props)
+    if (anyPropsAreNothing(props(parsed))) {
+        return Either.Left(new Error())
+    }
+
+    return Either.Right(parsed)
 }
