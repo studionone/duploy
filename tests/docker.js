@@ -27,14 +27,14 @@ test('docker.connect', (t) => {
         })
 
         // doc: Call unit under test
-        try {
-            const res = docker.connect()
-            t.fail('Should throw error')
-        } catch (error) {
-            t.equal(error.message, 'Invalid DOCKER_HOST type',
-                'should have thrown correct error message')
-        }
+        const res = docker.connect()
 
+        t.isEitherLeft(res,
+            'should be an Either.Left(Error)')
+        t.is(res.value, Error,
+            'Either.Left value should be an Error')
+        t.equal(res.value.message, 'Invalid DOCKER_HOST type',
+            'should have thrown correct error message')
         t.end()
     })
 
@@ -52,6 +52,9 @@ test('docker.connect', (t) => {
             host: '127.0.0.1',
             href: 'tcp://127.0.0.1',
         })
+
+        // Trigger the stub
+        res.map((r) => r())
 
         t.equal(docker.connectTcp.callCount, 1,
             'connectTcp called once')
@@ -74,6 +77,9 @@ test('docker.connect', (t) => {
             host: '/var/run/docker.sock',
             href: 'unix:///var/run/docker.sock',
         })
+
+        // Trigger the stub
+        res.map((r) => r())
 
         t.equal(docker.connectUnix.callCount, 1,
             'connectUnix called once')

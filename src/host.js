@@ -5,6 +5,7 @@
 
 const R         = require('ramda-maybe')
 const Maybe     = require('ramda-fantasy').Maybe
+const Either    = require('ramda-fantasy').Either
 const url       = require('url')
 const Just      = Maybe.Just
 const Nothing   = Maybe.Nothing
@@ -17,7 +18,7 @@ let host = exports
 // doc: Check unix or tcp
 const replace = R.curry((k, r, obj) => obj !== null ? Maybe.Just(R.replace(k, r, obj)) : Maybe.Nothing())
 
-// Host class that acts as a record for our parsed environment variable
+// Host class that acts as a record for our parsed environment variable. Throws errors if invalid
 // Host :: String a -> String -> { href :: String a, type :: String, host :: String }
 function Host(href, parsed) {
     // Set the href
@@ -43,14 +44,21 @@ function Host(href, parsed) {
 
 // Parses DOCKER_HOST environment variable and returns a Host object, or throws
 // an Error object if the env-var isn't valid
-// parseDockerHost :: String -> Host
+// parseDockerHost :: String -> Either (Error, Host)
 host.parseDockerHost = (hostEnv) => {
     // Default our hostEnv to be unix socket and parse our hostEnv
     hostEnv = R.defaultTo('unix:///var/run/docker.sock')(hostEnv)
 
     // Return the created Host object
-    let host = new Host(hostEnv, url.parse(hostEnv))
-    Object.freeze(host)
+    let result = null
 
-    return host
+    try {
+        let host = new Host(hostEnv, url.parse(hostEnv))
+        Object.freeze(host)
+        result = Either.Right(host)
+    } catch (e) {
+        result = Either.Left(e)
+    }
+
+    return result
 }

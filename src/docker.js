@@ -22,9 +22,9 @@ let docker = exports
 docker.connect = (host) => R.pipe(
     R.defaultTo({}),
     R.cond([
-        [R.propEq('type', 'unix'), docker.connectUnix],
-        [R.propEq('type', 'tcp'), docker.connectTcp],
-        [R.T, () => { throw new Error('Invalid DOCKER_HOST type') }]
+        [R.propEq('type', 'unix'), () => Either.Right(docker.connectUnix)],
+        [R.propEq('type', 'tcp'), () => Either.Right(docker.connectTcp)],
+        [R.T, () => Either.Left(new Error('Invalid DOCKER_HOST type'))],
     ])
 )(host)
 
