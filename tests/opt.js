@@ -17,7 +17,7 @@ test('parseOpt', t => {
         const argv = ['./duploy']
         const result = parseOpt(argv)
 
-        t.equal(Either.isLeft(result), true,
+        t.isEitherLeft(result,
             'result should be an Either.Left')
         t.equal(R.is(Exceptions.NoArgumentError, result.value), true,
             'result.value should be a NoArgumentError')

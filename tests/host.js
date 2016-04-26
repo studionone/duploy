@@ -14,16 +14,20 @@ test('parseDockerHost', (t) => {
 
         t.equal(res1.value.type, 'tcp',
             'sets type to tcp without colon')
-        t.isEitherRight(res1, 'Should be an Either.Right')
         t.equal(res2.value.type, 'unix',
             'sets type to unix without colon')
-        t.isEitherRight(res2, 'Should be an Either.Right')
+        t.isEitherRight(res1,
+            'should be an Either.Right')
+        t.isEitherRight(res2,
+            'should be an Either.Right')
         t.end()
     })
 
     t.test('pulls out host correctly for unix type', (t) => {
         const res = parseDockerHost()
 
+        t.isEitherRight(res,
+            'should be an Either.Right')
         t.equal(res.value.host, '/var/run/docker.sock',
             'docker.sock from pathname instead of hostname')
         t.end()
@@ -32,6 +36,8 @@ test('parseDockerHost', (t) => {
     t.test('pulls out host correctly for tcp type', (t) => {
         const res = parseDockerHost('tcp://example.com')
 
+        t.isEitherRight(res,
+            'should be an Either.Right')
         t.equal(res.value.host, 'example.com',
             'example.com from hostname instead of pathname')
         t.end()
@@ -40,12 +46,12 @@ test('parseDockerHost', (t) => {
     t.test('testing broken path', (t) => {
         const res = parseDockerHost('a')
 
-        t.equal(Either.isLeft(res), true,
-            'returns an Either.Left(Error)')
-        t.equal(res.value.message, 'Unsupported protocol in DOCKER_HOST',
-            'should have the correct error message')
+        t.isEitherLeft(res,
+            'should be an Either.Left(Error)')
         t.is(res.value, Error,
             'should be an Error object')
+        t.equal(res.value.message, 'Unsupported protocol in DOCKER_HOST',
+            'should have the correct error message')
         t.end()
     })
 

@@ -13,6 +13,7 @@
   "license": "MIT",
   "devDependencies": {
     "enclose": "^2.0.1",
+    "extend-tape": "^1.2.0",
     "proxyquire": "^1.7.4",
     "sanctuary": "^0.10.0",
     "simple-mock": "^0.7.0",
