@@ -33,7 +33,7 @@ docker.connectTcp = (host) => {
         R.split(':')
     )(host.host)
 
-    return net.connect(+host.port, host.host)
+    return net.connect(parseInt(host.port), host.host)
 }
 
 // doc: Unix-specific connection to Docker socket
