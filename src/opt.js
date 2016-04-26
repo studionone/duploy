@@ -1,17 +1,15 @@
 'use strict'
 
-const R       = require('ramda-maybe')
-const Maybe   = require('ramda-fantasy').Maybe
-const Just    = Maybe.Just
-const Nothing = Maybe.Nothing
+const R         = require('ramda')
+const Either    = require('ramda-fantasy').Either
 
 // doc: Checking whether a given regex matches the given string
 const isMatch = R.curry((regex, str) => RegExp(regex).exec(str) !== null)
 
 // doc: Matches defined via a thunk so we don't execute the curried functions
 const matches = () => [
-    [isMatch(/init/g), () => Just('init')],
-    [R.T, () => Nothing()],
+    [isMatch(/init/g), () => Either.Right('init')],
+    [R.T, () => Either.Left(new Error('No match given'))],
 ]
 
 // Used for matching given command-line arguments to functions, via the Maybe
