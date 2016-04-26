@@ -7,8 +7,8 @@ const R                 = require('ramda')
 const Either            = require('ramda-fantasy').Either
 
 // doc: Unit is used to parse DOCKER_HOST env var
-test('parseDockerHost', (t) => {
-    t.test('removes colon from type', (t) => {
+test('parseDockerHost', t => {
+    t.test('removes colon from type', t => {
         const res1 = parseDockerHost('tcp://example.com/')
         const res2 = parseDockerHost()
 
@@ -23,7 +23,7 @@ test('parseDockerHost', (t) => {
         t.end()
     })
 
-    t.test('pulls out host correctly for unix type', (t) => {
+    t.test('pulls out host correctly for unix type', t => {
         const res = parseDockerHost()
 
         t.isEitherRight(res,
@@ -33,7 +33,7 @@ test('parseDockerHost', (t) => {
         t.end()
     })
 
-    t.test('pulls out host correctly for tcp type', (t) => {
+    t.test('pulls out host correctly for tcp type', t => {
         const res = parseDockerHost('tcp://example.com')
 
         t.isEitherRight(res,
@@ -43,7 +43,7 @@ test('parseDockerHost', (t) => {
         t.end()
     })
 
-    t.test('testing broken path', (t) => {
+    t.test('testing broken path', t => {
         const res = parseDockerHost('a')
 
         t.isEitherLeft(res,
