@@ -3,11 +3,15 @@
  */
 'use strict'
 
-const parseDockerHost   = require('./host')
+const parseDockerHost   = require('./host').parseDockerHost
 const docker            = require('./docker')
-const parser            = require('http-string-parser')
 
-const main = (dockerHost) => {
+/**
+ * Module definition
+ */
+let duploy = exports
+
+duploy.main = (dockerHost) => {
     const host = parseDockerHost(dockerHost)
     const conn = docker.connect(host)
     const error = (err) => {
@@ -16,6 +20,7 @@ const main = (dockerHost) => {
     }
     const success = (data) => {
         try {
+            fs.writeFileSync(__dirname + '/test.json', data)
             const res = JSON.parse(parser.parseResponse(data).body)
             console.log(res)
         } catch (e) {
@@ -28,5 +33,5 @@ const main = (dockerHost) => {
 }
 
 if (require.main === module) {
-    main(process.env.DOCKER_HOST)
+    duploy.main(process.env.DOCKER_HOST)
 }

@@ -5,8 +5,11 @@
 
 const R         = require('ramda-maybe')
 const Future    = require('ramda-fantasy').Future
+const Either    = require('ramda-fantasy').Either
+const IO        = require('ramda-fantasy').IO
 const net       = require('net')
 const query     = require('querystring')
+const parser    = require('http-string-parser')
 
 /**
  * Docker module wrapper
@@ -74,4 +77,11 @@ docker.sendRequest = (client, method, endpoint) => {
         // Send the request
         client.write(docker.buildRequest(method, endpoint))
     })
+}
+
+// Parses a request from a Future
+// FIXME: Check this type signature, doesn't seem correct?
+// parseRequest :: String -> Either (e :: Error, a :: Object)
+docker.parseRequest = (request) => {
+
 }
