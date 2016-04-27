@@ -7,7 +7,7 @@
     "clean": "rm -rf build && mkdir -p build",
     "compile": "npm run clean && node compile.js",
     "start": "node src/duploy",
-    "test": "tapes tests/**/*.js | tap-spec"
+    "test": "tapes tests/*.js | tap-spec"
   },
   "author": "Josh Girvin <josh@jgirvin.com> (http://jgirvin.com)",
   "license": "MIT",

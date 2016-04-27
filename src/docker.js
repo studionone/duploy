@@ -80,9 +80,8 @@ docker.sendRequest = (client, method, endpoint) => {
     })
 }
 
-// Parses a request from a Future
-// FIXME: Check this type signature, doesn't seem correct?
-// parseRequest :: Buffer -> Either (e :: Error, a :: Object)
+// Parses a response Buffer from docker.connect
+// parseRequest :: Buffer -> Either (Error, Object)
 docker.parseResponse = (response) => {
     const responseString = response.toString()
     const parsed = parser.parseResponse(responseString)
@@ -95,6 +94,7 @@ docker.parseResponse = (response) => {
         'body'
     ])
 
+    // propsToMaybe :: Object -> [Maybe]
     const propsToMaybe =
         getProps(parsed).map(R.cond([
             [R.isNil, Maybe.Nothing],

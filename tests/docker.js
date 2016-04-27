@@ -3,6 +3,7 @@
 const test          = require('../ramda-tapes')
 const proxyquire    = require('proxyquire')
 const simple        = require('simple-mock')
+const fs            = require('fs')
 
 // doc: Testing the docker.connect abstraction
 test('docker.connect', t => {
@@ -92,7 +93,7 @@ test('docker.connect', t => {
 })
 
 test('parseResponse', t => {
-    let docker, response
+    let docker, response, responseString
 
     // doc: Stock standard unit under test
     docker = require('../src/docker')
@@ -104,12 +105,28 @@ test('parseResponse', t => {
 
     t.test('empty response buffer gives Either.Left(Error)', t => {
         response = new Buffer('')
+
         let result = docker.parseResponse(response)
 
         t.isEitherLeft(result,
             'result should be Either.Left')
         t.is(result.value, Error,
             'result.value should be an Error')
+        t.end()
+    })
+
+    t.test('real response gives Either.Right(parsed)', t => {
+        responseString = require('./data/res.js')
+        response = new Buffer(responseString)
+
+        let result = docker.parseResponse(response)
+
+        t.isEitherRight(result,
+            'result should be an Either.Right')
+        t.equal(result.value.body, '{}',
+            'result body should be a raw {} string')
+        t.equal(result.value.protocolVersion, 'HTTP/1.0',
+            'result protocolVersion should be 1.0')
         t.end()
     })
 
