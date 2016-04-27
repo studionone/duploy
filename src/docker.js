@@ -12,14 +12,12 @@ const net       = require('net')
 const query     = require('querystring')
 const parser    = require('http-string-parser')
 
-/**
- * Docker module wrapper
- */
+// Module wrapper
 let docker = exports
 
-/**
- * Top-level protocol-aware wrapper around net socket communication
- */
+
+// Top-level protocol-aware wrapper around net socket communication
+// connect :: String -> Either (Error, Socket)
 docker.connect = (host) => R.pipe(
     R.defaultTo({}),
     R.cond([
@@ -29,7 +27,8 @@ docker.connect = (host) => R.pipe(
     ])
 )(host)
 
-// doc: TCP-specific connection to Docker socket
+// TCP-specific connection to Docker socket
+// connectTcp :: String -> Socket
 docker.connectTcp = (host) => {
     host = R.compose(
         R.fromPairs,
@@ -40,10 +39,12 @@ docker.connectTcp = (host) => {
     return net.connect(parseInt(host.port), host.host)
 }
 
-// doc: Unix-specific connection to Docker socket
+// Unix-specific connection to Docker socket
+// connectUnix :: String -> Socket
 docker.connectUnix = (host) => net.connect({ path: host.host })
 
-// doc: Decorate the client with given event listeners
+// Decorate the client with given event listeners
+// decorateClient :: (Socket -> Object) -> Socket
 docker.decorateClient = (client, methods) => {
     // doc: Method is a k=>v pair of event name and callback (as [0] and [1])
     const bindEventListeners = (method) => client.on(method[0], method[1])
@@ -57,7 +58,9 @@ docker.decorateClient = (client, methods) => {
     return decorate(methods)
 }
 
-// doc: Builds a request string for our
+// TODO: Needs to handle data correctly
+// Builds a request string for our TCP/Unix socket Docker client
+// buildRequest :: (String -> String -> Object) -> String
 docker.buildRequest = (method, endpoint, data) => {
     method = R.defaultTo('get')(method)
     endpoint = R.defaultTo('/')(endpoint)
@@ -66,7 +69,8 @@ docker.buildRequest = (method, endpoint, data) => {
     return `${method.toUpperCase()} ${endpoint} HTTP/1.0\r\n\n`
 }
 
-// doc: Sends a request to the Docker socket and returns a Future
+// Sends a request to the Docker socket and returns a Future
+// sendRequest :: (String -> String -> String) -> Future
 docker.sendRequest = (client, method, endpoint) => {
     return Future((reject, resolve) => {
         let buf = ''
