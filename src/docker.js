@@ -18,13 +18,13 @@ let docker = exports
 
 // Top-level protocol-aware wrapper around net socket communication
 // connect :: String -> Either (Error, Socket)
-docker.connect = (host) => R.pipe(
-    R.defaultTo({}),
+docker.connect = (host) => R.compose(
     R.cond([
-        [R.propEq('type', 'unix'), () => Either.Right(docker.connectUnix)],
-        [R.propEq('type', 'tcp'), () => Either.Right(docker.connectTcp)],
+        [R.propEq('type', 'unix'), (h) => Either.Right(docker.connectUnix(h))],
+        [R.propEq('type', 'tcp'), (h) => Either.Right(docker.connectTcp(h))],
         [R.T, () => Either.Left(new Error('Invalid DOCKER_HOST type'))],
-    ])
+    ]),
+    R.defaultTo({})
 )(host)
 
 // TCP-specific connection to Docker socket
@@ -106,7 +106,7 @@ docker.parseResponse = (response) => {
             [R.T, Maybe.Just]
         ]))
 
-    // anyPropsAreNothing :: [a] -> Bool
+    // anyPropsAreNothing :: [Maybe] -> Bool
     const anyPropsAreNothing = v => List.of(...v).any(p => p.isNothing)
 
     return R.ifElse(

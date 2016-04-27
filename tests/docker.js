@@ -54,9 +54,6 @@ test('docker.connect', t => {
             href: 'tcp://127.0.0.1',
         })
 
-        // Trigger the stub
-        res.map((r) => r())
-
         t.equal(docker.connectTcp.callCount, 1,
             'connectTcp called once')
         t.equal(docker.connectUnix.callCount, 0,
@@ -78,9 +75,6 @@ test('docker.connect', t => {
             host: '/var/run/docker.sock',
             href: 'unix:///var/run/docker.sock',
         })
-
-        // Trigger the stub
-        res.map((r) => r())
 
         t.equal(docker.connectUnix.callCount, 1,
             'connectUnix called once')

@@ -22,19 +22,27 @@ const error = (err) => {
 
 // doc: success callback
 const success = (data) => {
-    try {
-        return Either.Right(JSON.parse(parser.parseResponse(data).body))
-    } catch (e) {
-        return Either.Left(e)
-    }
+    const res =
+        docker.parseResponse(data)
+              .map(v => console.log(v))
+}
+
+duploy.parse = (resp) => {
+    let res = docker.parseResponse(resp).map((parsed) => {
+        console.log(parsed)
+    })
+}
+
+duploy.error = (e) => {
+    console.error(e.message)
+    process.exit(1)
 }
 
 duploy.main = (dockerHost) => {
-    const conn =
-        parseDockerHost(dockerHost)
-            .map(docker.connect)
-            .map((conn) => docker.sendRequest(conn, 'GET', '/images/json'))
-            .fork(error, success)
+    const conn = parseDockerHost(dockerHost)
+            .bimap(duploy.error, host => docker.connect(host))
+            .bimap(duploy.error, c => docker.sendRequest(c.value, 'GET', '/images/json'))
+            .chain(f => f.fork(error, success))
 }
 
 if (require.main === module) {
