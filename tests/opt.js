@@ -53,7 +53,7 @@ test('parseOpt', t => {
         const argv = ['./duploy', 'init  ']
         const result = parseOpt(argv)
 
-        t.equal(Either.isRight(result), true,
+        t.isEitherRight(result,
             'result should be Either.Right')
         t.equal(result.value, 'init',
             'result should have init as its Either.Right value')
