@@ -90,3 +90,28 @@ test('docker.connect', t => {
 
     t.end()
 })
+
+test('parseResponse', t => {
+    let docker, response
+
+    // doc: Stock standard unit under test
+    docker = require('../src/docker')
+
+    t.afterEach(t => {
+        simple.restore()
+        t.end()
+    })
+
+    t.test('empty response buffer gives Either.Left(Error)', t => {
+        response = new Buffer('')
+        let result = docker.parseResponse(response)
+
+        t.isEitherLeft(result,
+            'result should be Either.Left')
+        t.is(result.value, Error,
+            'result.value should be an Error')
+        t.end()
+    })
+
+    t.end()
+})
