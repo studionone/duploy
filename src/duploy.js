@@ -46,5 +46,5 @@ duploy.main = (dockerHost) => {
 }
 
 if (require.main === module) {
-    duploy.main(process.env.DOCKER_HOST)
+    duploy.main('process.env.DOCKER_HOST')
 }
