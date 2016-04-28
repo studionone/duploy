@@ -22,6 +22,7 @@
   },
   "dependencies": {
     "http-string-parser": "0.0.5",
+    "packrattle": "^4.1.0",
     "ramda": "^0.21.0",
     "ramda-fantasy": "git+https://github.com/ramda/ramda-fantasy.git",
     "ramda-maybe": "^0.18.0"

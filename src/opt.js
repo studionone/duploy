@@ -1,9 +1,12 @@
 /**
  * Functional option/command parser for CLI arguments
+ *
+ * TODO: Swap out this R.test-based hard-coded parser for a proper parser combinator implementation
  */
 'use strict'
 
 const R                 = require('ramda')
+const packrattle        = require('packrattle')
 const Either            = require('ramda-fantasy').Either
 const NoArgumentError   = require('./exceptions').Opt.NoArgumentError
 const NoMatchError      = require('./exceptions').Opt.NoMatchError
@@ -35,4 +38,12 @@ opt.parseOpt = (argv) => {
         R.toLower,
         R.trim
     )(argv[1])
+}
+
+// Build up our set of parsers
+opt.option  = packrattle.regex(/\-\-[a-zA-Z]+/)
+opt.word    = packrattle.regex(/[a-zA-Z]+/)
+
+opt.parser = (argv) => {
+
 }
