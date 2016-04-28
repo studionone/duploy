@@ -62,3 +62,26 @@ test('parseOpt', t => {
 
     t.end()
 })
+
+test('packrattle parser combinators', t => {
+
+    t.test('commandOrPath works with init command', t => {
+        const args = opt.combineArgv(['duploy', 'init'])
+        const args2 = opt.combineArgv(['duploy', 'now'])
+        const args3 = opt.combineArgv(['duploy', './testing.yml'])
+
+        try {
+            const result = opt.commandOrPath.run(args)
+            const result2 = opt.commandOrPath.run(args2)
+            const result3 = opt.commandOrPath.run(args3)
+            console.log(result, result2, result3)
+            t.pass()
+        } catch (e) {
+            t.fail(`Error parsing the string: ${e.message}`)
+        }
+
+        t.end()
+    })
+
+    t.end()
+})

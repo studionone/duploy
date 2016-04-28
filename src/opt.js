@@ -40,9 +40,23 @@ opt.parseOpt = (argv) => {
     )(argv[1])
 }
 
-// Build up our set of parsers
-opt.option  = packrattle.regex(/\-\-[a-zA-Z]+/)
-opt.word    = packrattle.regex(/[a-zA-Z]+/)
+// Standard parsers
+opt.longopt     = packrattle.regex(/\-\-[a-zA-Z]+/)
+opt.shortopt    = packrattle.regex(/\-[a-zA-Z]/)
+opt.word        = packrattle.regex(/[a-zA-Z]+/)
+opt.path        = packrattle.regex(/[a-zA-Z0-9\\\/ \.]+\.yml/)
+
+// Command parsers
+opt.init        = packrattle.string('init')
+opt.now         = packrattle.string('now')
+
+// Parser combinators
+opt.commands        = packrattle.alt(opt.init, opt.now)
+opt.commandOrPath   = packrattle.alt(opt.commands, opt.path)
+
+// Util method for concatentating an argv array to a string, minus the first element
+// combineArgv :: [String] -> String
+opt.combineArgv = (argv) => R.trim(argv.slice(1).reduce((v, i) => v + ' ' + i, ''))
 
 opt.parser = (argv) => {
 
