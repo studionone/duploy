@@ -74,8 +74,13 @@ test('packrattle parser combinators', t => {
             const result = opt.commandOrPath.run(args)
             const result2 = opt.commandOrPath.run(args2)
             const result3 = opt.commandOrPath.run(args3)
-            console.log(result, result2, result3)
-            t.pass()
+
+            t.equal(result, 'init',
+                'first result matches "init"')
+            t.equal(result2, 'now',
+                'second result matches "now"')
+            t.equal('./testing.yml', result3[0],
+                'third result matches ./testing.yml')
         } catch (e) {
             t.fail(`Error parsing the string: ${e.message}`)
         }
@@ -85,3 +90,6 @@ test('packrattle parser combinators', t => {
 
     t.end()
 })
+
+// Test out dot-file
+opt.parser.writeDotFile(__dirname + '/data/parser.dot')

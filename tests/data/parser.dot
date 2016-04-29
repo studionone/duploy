@@ -1,0 +1,23 @@
+digraph packrattle {
+  node [fontname=Courier];
+
+  "16" -> "9";
+  "9" -> "8";
+  "8" -> "7";
+  "16" -> "13";
+  "13" -> "12";
+  "12" -> "10";
+  "12" -> "11";
+  "13" -> "6";
+  "16" -> "9";
+
+  "16" [label="[16] seq\n[ drop:optional:/[ \\t]+/, (('init' or 'n...", shape=rect];
+  "9" [label="[9] drop\ndrop:optional:/[ \\t]+/", shape=rect];
+  "8" [label="[8] optional\noptional:/[ \\t]+/", shape=rect];
+  "7" [label="[7] regex\n/[ \\t]+/", shape=rect];
+  "13" [label="[13] alt\n('init' or 'now') or /[a-zA-Z0-9\\\\\\/ \\.]...", shape=rect];
+  "12" [label="[12] alt\n'init' or 'now'", shape=rect];
+  "10" [label="[10] string\n'init'", shape=rect];
+  "11" [label="[11] string\n'now'", shape=rect];
+  "6" [label="[6] regex\n/[a-zA-Z0-9\\\\\\/ \\.]+\\.yml/", shape=rect];
+}
