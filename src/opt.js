@@ -58,6 +58,7 @@ opt.options         = packrattle.alt(opt.longopt, opt.shortopt).optional()
 
 // Build our parser
 opt.parser = packrattle([
+    packrattle.repeat(opt.options, { min: 0 }),
     opt.whitespace,
     opt.commandOrPath,
     opt.whitespace,

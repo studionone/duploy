@@ -5,6 +5,8 @@ const proxyquire    = require('proxyquire')
 const simple        = require('simple-mock')
 const R             = require('ramda')
 const Either        = require('ramda-fantasy').Either
+const child         = require('child_process')
+const which         = require('which')
 
 // Unit under test
 const opt           = require('../src/opt')
@@ -93,3 +95,18 @@ test('packrattle parser combinators', t => {
 
 // Test out dot-file
 opt.parser.writeDotFile(__dirname + '/data/parser.dot')
+which('dot', (er, resolvedPath) => {
+    if (er) return
+    // Execute dot from graphviz to convert DOT file into a PNG
+    child.spawnSync('dot', [
+        '-Tpng',
+        '-o',
+        './data/parser.png',
+        './data/parser.dot'
+    ], {
+        cwd: __dirname
+    })
+
+    // Now, kill the DOT file
+    child.spawnSync('rm', ['./data/parser.dot'], { cwd: __dirname })
+})
