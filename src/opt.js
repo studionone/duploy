@@ -100,13 +100,23 @@ opt.options = packrattle
             opt.shortopt
         ).named('Long or Short Option'),
         opt.whitespace,
-        { min: 0 }
+        { min: 1 }
     )
-    .named('Options')
 
 // Build our parser
-opt.parser = packrattle.repeatSeparated([
-    opt.options.named('Global Options').optional().map((match, span) => new GlobalOptions(match, span)),
+opt.parser = packrattle([
+    opt.options.named('Global Options').map((match, span) => {
+        if (match !== '') return new GlobalOptions(match, span)
+    }).optional(),
+    opt.whitespace.optional().drop(),
     opt.commandOrPath,
-    opt.options.named('Local Options').optional().map((match, span) => new LocalOptions(match, span)),
-], opt.whitespace).consume().map((match, span) => new Match(match[0]))
+    opt.whitespace.optional().drop(),
+    opt.options.named('Local Options').map((match, span) => {
+        if (match !== '') return new LocalOptions(match, span)
+    }).optional(),
+]).consume().map((match, span) => {
+    console.log('Yep, matched!')
+    console.log(match)
+
+    return match[0]
+})

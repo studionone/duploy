@@ -77,6 +77,13 @@ test('packrattle parser combinators', t => {
             const result2 = opt.commandOrPath.run(args2)
             const result3 = opt.commandOrPath.run(args3)
 
+
+            t.is(result, opt.Tokens.CommandToken,
+                'first result should be a command token')
+            t.is(result2, opt.Tokens.CommandToken,
+                'second result should be a command token')
+            t.is(result3, opt.Tokens.PathToken,
+                'third result should be a path token')
             t.equal(result.match, 'init',
                 'first result matches "init"')
             t.equal(result2.match, 'now',
