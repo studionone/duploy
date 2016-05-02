@@ -56,6 +56,15 @@ class LongOptToken extends Token {}
 class ShortOptToken extends Token {}
 class CommandToken extends Token {}
 class PathToken extends Token {}
+class GlobalOptions extends Token {}
+class LocalOptions extends Token {}
+
+// Match
+class Match {
+    constructor(match) {
+        this.match = match
+    }
+}
 
 opt.Tokens = {
     LongOptToken,
@@ -97,7 +106,7 @@ opt.options = packrattle
 
 // Build our parser
 opt.parser = packrattle.repeatSeparated([
-    opt.options.named('Global Options').optional(),
+    opt.options.named('Global Options').optional().map((match, span) => new GlobalOptions(match, span)),
     opt.commandOrPath,
-    opt.options.named('Local Options').optional(),
-], opt.whitepace).consume()
+    opt.options.named('Local Options').optional().map((match, span) => new LocalOptions(match, span)),
+], opt.whitespace).consume().map((match, span) => new Match(match[0]))
