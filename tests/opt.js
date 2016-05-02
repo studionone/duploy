@@ -67,7 +67,7 @@ test('parseOpt', t => {
 
 test('packrattle parser combinators', t => {
 
-    t.test('commandOrPath works with init command', t => {
+    t.test('commandOrPath works with commands or filenames', t => {
         const args = opt.combineArgv(['duploy', 'init'])
         const args2 = opt.combineArgv(['duploy', 'now'])
         const args3 = opt.combineArgv(['duploy', './testing.yml'])
@@ -93,10 +93,13 @@ test('packrattle parser combinators', t => {
     t.end()
 })
 
-// Test out dot-file
-opt.parser.writeDotFile(__dirname + '/data/parser.dot')
+// Finds whether "dot" binary from graphviz exists on the $PATH
 which('dot', (er, resolvedPath) => {
     if (er) return
+
+    // Write out DOT file for graph of parser
+    opt.parser.writeDotFile(__dirname + '/data/parser.dot')
+
     // Execute dot from graphviz to convert DOT file into a PNG
     child.spawnSync('dot', [
         '-Tpng',
