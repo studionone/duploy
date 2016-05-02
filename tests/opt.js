@@ -77,11 +77,11 @@ test('packrattle parser combinators', t => {
             const result2 = opt.commandOrPath.run(args2)
             const result3 = opt.commandOrPath.run(args3)
 
-            t.equal(result, 'init',
+            t.equal(result.match, 'init',
                 'first result matches "init"')
-            t.equal(result2, 'now',
+            t.equal(result2.match, 'now',
                 'second result matches "now"')
-            t.equal('./testing.yml', result3[0],
+            t.equal(result3.match[0], './testing.yml',
                 'third result matches ./testing.yml')
         } catch (e) {
             t.fail(`Error parsing the string: ${e.message}`)

@@ -44,25 +44,60 @@ opt.parseOpt = (argv) => {
 // combineArgv :: [String] -> String
 opt.combineArgv = (argv) => R.trim(argv.slice(1).reduce((v, i) => v + ' ' + i, ''))
 
+// Tokens
+class Token {
+    constructor(match, span) {
+        this.match = match
+        this.span = span
+    }
+}
+
+class LongOptToken extends Token {}
+class ShortOptToken extends Token {}
+class CommandToken extends Token {}
+class PathToken extends Token {}
+
+opt.Tokens = {
+    LongOptToken,
+    ShortOptToken,
+    CommandToken,
+    PathToken,
+}
+
 // Standard parsers
-opt.longopt     = packrattle.regex(/\-\-[a-zA-Z]+/)
-opt.shortopt    = packrattle.regex(/\-[a-zA-Z]/)
-opt.word        = packrattle.regex(/[a-zA-Z]+/)
-opt.path        = packrattle.regex(/[a-zA-Z0-9\\\/ \.]+\.yml/)
-opt.whitespace  = packrattle.regex(/[ \t]+/)
+opt.longopt     = packrattle.regex(/\-\-[a-zA-Z]+/).named('Long Option').map((match, span) => new LongOptToken(match, span))
+opt.shortopt    = packrattle.regex(/\-[a-zA-Z]/).named('Short Option').map((match, span) => new ShortOptToken(match, span))
+opt.path        = packrattle.regex(/[a-zA-Z0-9\\\/ \.]+\.yml/).named('Path').map((match, span) => new PathToken(match, span))
+opt.whitespace  = packrattle.regex(/[ \t]+/).named('Whitespace')
 
 // Command parsers
-opt.init        = packrattle.string('init')
-opt.now         = packrattle.string('now')
+opt.init        = packrattle.string('init').named('Command(Init)')
+opt.now         = packrattle.string('now').named('Command(Now)')
 
 // Parser combinators
-opt.allCommands     = packrattle.alt(opt.init, opt.now)
-opt.command         = packrattle.seq(opt.allCommands, opt.path)
-opt.commandOrPath   = packrattle.alt(opt.allCommands, opt.path)
-opt.options         = packrattle.repeatSeparated(packrattle.alt(opt.longopt, opt.shortopt), opt.whitespace, { min: 0 })
+opt.allCommands = packrattle
+    .alt(opt.init, opt.now)
+    .named('Command')
+    .map((match, span) => new CommandToken(match, span))
+
+opt.commandOrPath = packrattle
+    .alt(opt.allCommands, opt.path)
+    .named('Command or Path')
+
+opt.options = packrattle
+    .repeatSeparated(
+        packrattle.alt(
+            opt.longopt,
+            opt.shortopt
+        ).named('Long or Short Option'),
+        opt.whitespace,
+        { min: 0 }
+    )
+    .named('Options')
 
 // Build our parser
 opt.parser = packrattle.repeatSeparated([
-    opt.options.optional(),
-    opt.commandOrPath
-],  opt.whitepace)
+    opt.options.named('Global Options').optional(),
+    opt.commandOrPath,
+    opt.options.named('Local Options').optional(),
+], opt.whitepace).consume()
