@@ -76,5 +76,7 @@ test('testing out the above defined lexer/paser', t => {
 
     t.equal(result.length, 5,
         'ast should have 5 tokens')
+    t.is(result[0].token, LongOpt,
+        'first token is a LongOpt')
     t.end()
 })
