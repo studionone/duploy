@@ -12,19 +12,21 @@ function Path(fpath)   { this.path = fpath }
 
 // lexer :: String -> [Token]
 function lexer(input) {
-    let ast = []
+    let tokens = []
     let curr = ''
     let i = 0
     input = R.defaultTo('', input) + ' '
 
-    const lexer = (char) => {
+    R.map((char) => {
         i = i + 1 // Increase our character index
         // If whitespace, finish lexing and tokenize
         if (R.test(/[\t ]/, char)) {
             let token = tokenize(curr, i)
 
             if (token !== null) {
-                ast.push(Tuple(token, i - curr.length))
+                // Push a Tuple (Number, Token) to the stream
+                const charNo = i - curr.length
+                tokens.push(Tuple(charNo, token))
                 curr = ''
 
                 return
@@ -32,11 +34,9 @@ function lexer(input) {
         }
 
         curr = curr + char
-    }
+    })(input)
 
-    R.map(lexer)(input)
-
-    return ast
+    return tokens
 }
 
 // tokenize :: String -> (Maybe Token)
@@ -75,8 +75,7 @@ test('testing out the above defined lexer/paser', t => {
 
     t.equal(result.length, 5,
         'ast should have 5 tokens')
-    console.log(result[0])
-    t.is(Tuple.fst(result[0]), LongOpt,
+    t.tupleSndIs(result[0], LongOpt,
         'first token is a LongOpt')
     t.end()
 })
