@@ -21,9 +21,6 @@ function lexer(initial) {
     // Setup our internal variables
     let curr='', i=0
 
-    // notNil :: a -> Boolean
-    const notNil = R.complement(R.isNil)
-
     // compact :: [Maybe a] -> [Maybe a]
     const onlyJust = _ => Maybe.isJust(_)
 
@@ -54,8 +51,8 @@ function lexer(initial) {
     }
 
     return R.compose(
-        ll => ll.map(j => j.value),
-        ll => ll.filter(onlyJust),
+        list => list.map(j => j.value),
+        list => list.filter(onlyJust),
         arr => new List(arr),
         R.map(lexerFn)
     )(input)
@@ -91,7 +88,7 @@ function tokenize(lexeme) {
 }
 
 // Parser for a stream of tokens
-// parser :: [Maybe Tuple (Number, Token)] -> Ast
+// parser :: List Tuple (Number, Token) -> Ast
 function parser(tokens) {
 }
 
