@@ -2,6 +2,7 @@
 
 const test  = require('../ramda-tapes')
 const R     = require('ramda')
+const Tuple = require('ramda-fantasy').Tuple
 
 // Tokens
 function LongOpt(opt)  { this.option = opt }
@@ -18,17 +19,12 @@ function lexer(input) {
 
     const lexer = (char) => {
         i = i + 1 // Increase our character index
-        // console.log(i)
         // If whitespace, finish lexing and tokenize
-        if (R.test(/[\t ]/, char) || i == input.length) {
+        if (R.test(/[\t ]/, char)) {
             let token = tokenize(curr, i)
 
             if (token !== null) {
-
-                ast.push({
-                    token: token,
-                    pos: i - curr.length,
-                })
+                ast.push(Tuple(token, i - curr.length))
                 curr = ''
 
                 return
@@ -43,7 +39,7 @@ function lexer(input) {
     return ast
 }
 
-
+// tokenize :: String -> (Maybe Token)
 function tokenize(lexeme) {
     // Grab the 2nd element of set
     // _2nd :: [a] -> Int -> a
@@ -70,13 +66,17 @@ function tokenize(lexeme) {
     ])(lexeme)
 }
 
+function parser(tokens) {
+}
+
 test('testing out the above defined lexer/paser', t => {
     const input = '--hello -w init now testing.yml'
     const result = lexer('--hello -w init now testing.yml')
 
     t.equal(result.length, 5,
         'ast should have 5 tokens')
-    t.is(result[0].token, LongOpt,
+    console.log(result[0])
+    t.is(Tuple.fst(result[0]), LongOpt,
         'first token is a LongOpt')
     t.end()
 })
