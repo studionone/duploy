@@ -9,10 +9,11 @@ const Just      = Maybe.Just
 const Nothing   = Maybe.Nothing
 
 // Tokens
-function LongOpt(opt)  { this.option = opt }
-function ShortOpt(opt) { this.option = opt }
-function Command(name) { this.command = name }
-function Path(fpath)   { this.path = fpath }
+function LongOpt(opt)   { this.option = opt }
+function ShortOpt(opt)  { this.option = opt }
+function Command(name)  { this.command = name }
+function Path(fpath)    { this.path = fpath }
+function Word(text)     { this.text = text }
 
 // lexer :: String -> [Token]
 function lexer(initial) {
@@ -66,13 +67,16 @@ function tokenize(lexeme) {
 
     // Compose pull match
     // matchToToken :: Regex -> Function
-    const matchToToken = R.curry((regex, n) => R.pipe(R.match(regex), _2nd, n))
+    const matchToToken =
+        R.curry((regex, cb) =>
+            R.pipe(R.match(regex), _2nd, cb))
 
     // NOTE: All matches _must_ have a capture group in them
-    const matchLongOpt = /^\-\-([a-zA-Z]+)$/;
-    const matchShortOpt = /^\-([a-zA-Z])$/;
-    const matchCommand = /^(init|now)$/;
-    const matchPath = /^([a-zA-Z0-9\\\/ \.]+\.yml)$/;
+    const matchLongOpt = /^\-\-([a-zA-Z]+)$/
+    const matchShortOpt = /^\-([a-zA-Z])$/
+    const matchCommand = /^(init|now)$/
+    const matchPath = /^([a-zA-Z0-9\\\/ \.]+\.yml)$/
+    const matchWord = /^[a-zA-Z\d\-\+]+$/
 
     return Maybe.of(
         R.cond([
@@ -80,6 +84,7 @@ function tokenize(lexeme) {
             [R.test(matchShortOpt), matchToToken(matchShortOpt)(_ => new ShortOpt(_))],
             [R.test(matchCommand), matchToToken(matchCommand)(_ => new Command(_))],
             [R.test(matchPath), matchToToken(matchPath)(_ => new Path(_))],
+            [R.test(matchWord), matchToToken(matchWord)(_ => new Word(_))],
 
             // Default case
             [R.T, _ => null]
