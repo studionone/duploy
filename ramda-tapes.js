@@ -9,7 +9,8 @@ const addAssertions = require('extend-tape')
 const R             = require('ramda')
 const RF            = require('ramda-fantasy')
 
-const test = addAssertions(tape, {
+
+const assertions = {
     // doc: Overloading the t.is method to check a type against a constructor instead
     is(instance, type, message) {
          this.equal(R.is(type)(instance), true, message)
@@ -46,6 +47,17 @@ const test = addAssertions(tape, {
             this.fail(`Value must be an instance of Maybe: ${instance.constructor.name} given`)
         }
     },
-})
+
+    tupleFstIs(instance, type, message) {
+        this.is(RF.Tuple.fst(instance), type, message)
+    },
+
+    tupleSndIs(instance, type, message) {
+        this.is(RF.Tuple.snd(instance), type, message)
+    },
+}
+
+// Bind the assertions
+const test = addAssertions(tape, assertions)
 
 module.exports = test
