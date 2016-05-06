@@ -3,6 +3,7 @@
 const test      = require('../ramda-tapes')
 const R         = require('ramda')
 const List      = require('../lib/list')
+const Stack     = require('../lib/stack')
 const Tuple     = require('ramda-fantasy').Tuple
 const Maybe     = require('ramda-fantasy').Maybe
 const Just      = Maybe.Just
@@ -76,7 +77,7 @@ function tokenize(lexeme) {
     const matchShortOpt = /^\-([a-zA-Z])$/
     const matchCommand = /^(init|now)$/
     const matchPath = /^([a-zA-Z0-9\\\/ \.]+\.yml)$/
-    const matchWord = /^[a-zA-Z\d\-\+]+$/
+    const matchWord = /^([a-zA-Z\d\-\+]+)$/
 
     return Maybe.of(
         R.cond([
@@ -99,13 +100,14 @@ function parser(tokens) {
 
 test('testing out the above defined lexer/paser', t => {
     const input = '--hello -w init now testing.yml'
-    const result = lexer('--hello -w init now testing.yml')
+    const result = lexer('--hello argument -w init now testing.yml')
 
     t.is(result, List,
         'result should be a List')
-    t.equal(result.length(), 5,
+    t.equal(result.length(), 6,
         'ast should have 5 tokens')
     t.tupleSndIs(result.head(), LongOpt,
         'First tokens value should be a LongOpt')
+    t.tupleSndIs()
     t.end()
 })
