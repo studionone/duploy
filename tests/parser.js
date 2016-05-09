@@ -1,45 +1,31 @@
 'use strict'
 
+// Top-level dependencies
 const test      = require('../ramda-tapes')
 const R         = require('ramda')
+const Tokens    = require('../lib/tokens')
+
+// Monadic data-structures
 const List      = require('../lib/list')
 const Stack     = require('../lib/stack')
+
+// Monads
 const Tuple     = require('ramda-fantasy').Tuple
 const Maybe     = require('ramda-fantasy').Maybe
 const Just      = Maybe.Just
 const Nothing   = Maybe.Nothing
 
-// Type definitions
-//
+// Token classes
+const Token     = Tokens.Token
+const Option    = Tokens.Option
+const LongOpt   = Tokens.LongOpt
+const ShortOpt  = Tokens.ShortOpt
+const Command   = Tokens.Command
+const Path      = Tokens.Path
+const Word      = Tokens.Word
+
+// Type aliases
 // type TokenTuple = Tuple (Number, Token)
-//
-
-// Base Token class
-class Token {}
-
-// Base Option token
-class Option extends Token {
-    constructor(opt) { super(); this.option = opt }
-}
-
-// Actual Option tokens
-class LongOpt extends Option {}
-class ShortOpt extends Option {}
-
-// Command token
-class Command extends Token {
-    constructor(name) { super(); this.command = name }
-}
-
-// Path token
-class Path extends Token {
-    constructor(fpath) { super(); this.path = fpath }
-}
-
-// Base Word token
-class Word extends Token {
-    constructor(text) { super(); this.text = text }
-}
 
 // lexer :: String -> [Token]
 function lexer(initial) {
