@@ -1,3 +1,6 @@
+/**
+ * PEG parser, handwritten using "ramda", "ramda-fantasy" and "List-in-JS"
+ */
 'use strict'
 
 // Top-level dependencies
