@@ -133,8 +133,8 @@ Parser.prototype.parse = function (tokens) {
         }],
         [tupleIs(Command), _ => {
 
-        }]
-        [R.T, () => { throw new SyntaxError('Invalid token') }]
+        }],
+        [R.T, () => { throw new SyntaxError('Invalid token') }],
     ])(token)
 
     return this.parse(rest)
@@ -186,7 +186,7 @@ function parseOption(option, rest) {
     return Tuple(remaining, optionSet)
 }
 
-test('testing out the above defined lexer', t => {
+test('testing out the lexer', t => {
     const input = '--hello -w init now testing.yml'
     const result = lexer('--hello argument -w init now testing.yml')
 
@@ -200,7 +200,7 @@ test('testing out the above defined lexer', t => {
     t.end()
 })
 
-test('option & argument parser builds a List', t => {
+test('testing that the option parser handles arguments and returns a Tuple (List, List)', t => {
     const set = lexer('--hello testing world init testing.yml')
     const result = parseOption(set.head(), set.tail())
 
