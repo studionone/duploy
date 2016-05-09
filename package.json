@@ -3,6 +3,11 @@
   "version": "1.0.0",
   "description": "",
   "main": "src/duploy.js",
+  "engineStrict": true,
+  "engines": {
+    "node": ">=6.0.0",
+    "npm": ">=3.6.0"
+  },
   "scripts": {
     "clean": "rm -rf build && mkdir -p build",
     "compile": "npm run clean && node compile.js",
