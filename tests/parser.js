@@ -19,13 +19,14 @@ const Just      = Maybe.Just
 const Nothing   = Maybe.Nothing
 
 // Token classes
-const Token     = Tokens.Token
-const Option    = Tokens.Option
-const LongOpt   = Tokens.LongOpt
-const ShortOpt  = Tokens.ShortOpt
-const Command   = Tokens.Command
-const Path      = Tokens.Path
-const Word      = Tokens.Word
+const Token         = Tokens.Token
+const Option        = Tokens.Option
+const LongOpt       = Tokens.LongOpt
+const ShortOpt      = Tokens.ShortOpt
+const Command       = Tokens.Command
+const InitCommand   = Tokens.InitCommand
+const Path          = Tokens.Path
+const Word          = Tokens.Word
 
 // Type aliases
 // type TokenTuple = Tuple (Number, Token)
@@ -263,3 +264,5 @@ test('test the parser works for options and arguments', t => {
     })
     t.end();
 })
+
+test('test the parser works for a single command, no arguments')
