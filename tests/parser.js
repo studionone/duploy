@@ -62,7 +62,6 @@ function lexer(initial) {
         // Add our new character to the accumulated to check on next tokenization
         curr = curr + char
 
-        // TODO: Make this use a Maybe instead of a nullable return
         return Nothing()
     }
 
@@ -109,40 +108,62 @@ function tokenize(lexeme) {
 
 // Parser for a stream of tokens
 // parser :: List Tuple (Number, Token) -> Ast
-function Parser(tokens) {
-    this.ast = List.empty
-    this.tokens = tokens
-    this.mode = 'global'
+// function Parser(tokens) {
+//     this.ast = List.empty
+//     this.tokens = tokens
+//     this.mode = 'global'
+//
+//     return this
+// }
 
-    return this
+class Parser {
+    constructor(tokens) {
+        this.tokens = tokens
+        this.ast = List.empty
+        this.state = 'begin'
+    }
+
+    parse(tokens) {
+        if (this.state === 'begin') {
+            this.state = 'parsing'
+            tokens = this.tokens
+        }
+
+        // Setup our current working token and cons/cars
+        let token = tokens.head()
+        let rest = tokens.tail()
+        let parsed = Nothing()
+
+        // Checks the type of the Tuple's 2nd value via R.is
+        // tupleIs :: a -> Tuple -> Boolean
+        const tupleIs = kind => R.compose(R.is(kind), Tuple.snd)
+
+        const res = R.cond([
+            [tupleIs(Option), opt => {
+                const result = parseOption(opt, rest)
+                rest = Tuple.fst(result)
+
+                return Just(Tuple.snd(result))
+            }],
+            // [tupleIs(Command), _ => {
+            //     const result =
+            // }],
+            [R.T, (_) => { console.log(_); throw new SyntaxError('Invalid token') }],
+        ])(token)
+
+        // Add parsed to AST if we've got a Just
+        this.ast = R.ifElse(
+            _ => Maybe.isJust(_),
+            _ => this.ast.concat(_),
+            _ => R.identity(this.ast)
+        )(res)
+
+        // Short circut the recursion
+        if (rest.length() === 0) return this.ast
+
+        return this.parse(rest)
+    }
 }
-
-Parser.prototype.parse = function (tokens) {
-    // Default our tokens
-    tokens = R.defaultTo(this.tokens)(tokens)
-    let token = tokens.head()
-    let rest = tokens.tail()
-
-    // Checks the type of the Tuple's 2nd value via R.is
-    // tupleIs :: a -> Tuple -> Boolean
-    const tupleIs = kind => R.compose(R.is(kind), Tuple.snd)
-
-    const res = R.cond([
-        [tupleIs(Option), _ => {
-            const result = parseOption(_, rest)
-            rest = Tuple.fst(result)
-            parsed = Tuple.snd(result)
-            this.ast = this.ast.concat(List.of(parsed))
-        }],
-        [tupleIs(Command), _ => {
-
-        }],
-        [R.T, () => { throw new SyntaxError('Invalid token') }],
-    ])(token)
-
-    return this.parse(rest)
-}
-
 
 // Recursive decent parser for options & arguments
 // parseOption :: TokenTuple -> List TokenTuple -> List TokenTuple
@@ -164,16 +185,24 @@ function parseOption(option, rest) {
 
         // Util function for checking if it's a different token, finishing parsing
         // notAnotherToken :: Token -> Boolean
-        let notAnotherToken =
-            _ => R.anyPass([
+        let notAnotherToken = R.complement(
+            R.anyPass([
                 R.is(Option),
                 R.is(Command),
                 R.is(Path)
-            ])(_) === false
+            ])
+        )
 
-        if (cont === true
-         && R.is(Word)(Tuple.snd(current))
-         && notAnotherToken(Tuple.snd(current))) {
+        // isWordAndNotToken :: Token -> Boolean
+        const isWordAndNotToken = R.allPass([
+            R.is(Word),
+            notAnotherToken,
+        ])
+
+        // extractAndTest :: TokenTuple -> Boolean
+        const extractAndTest = R.compose(isWordAndNotToken, Tuple.snd)
+
+        if (cont === true && extractAndTest(current)) {
             optionSet = optionSet.concat(List.of(current))
 
             return _parse(rest)
@@ -184,7 +213,9 @@ function parseOption(option, rest) {
     }
 
     // Start parser
-    _parse(rest)
+    if (rest.length() > 0) {
+        _parse(rest)
+    }
 
     return Tuple(remaining, optionSet)
 }
@@ -199,7 +230,6 @@ test('testing out the lexer', t => {
         'ast should have 5 tokens')
     t.tupleSndIs(result.head(), LongOpt,
         'First tokens value should be a LongOpt')
-    t.tupleSndIs()
     t.end()
 })
 
@@ -212,4 +242,24 @@ test('testing that the option parser handles arguments and returns a Tuple (List
     t.equal(Tuple.fst(result).length(), 2,
         'result should have two items remaining in Tuple')
     t.end()
+})
+
+test('test the parser works for options and arguments', t => {
+    const tokens = lexer('--long hello -h')
+    const parser = new Parser(tokens)
+    const ast = parser.parse()
+
+    t.equal(ast.length(), 2,
+        'ast should have two branches')
+    t.equal(ast.head().length(), 2,
+        'ast head should have two tokens')
+    t.equal(ast.tail().length(), 1,
+        'ast tail should have one token')
+    t.tupleSndIs(ast.head().head(), LongOpt,
+        'first token should be a LongOpt')
+    ast.tail().head().map(lastToken => {
+        t.tupleSndIs(lastToken, ShortOpt,
+            'ast tail Tuple.snd should be a ShortOpt')
+    })
+    t.end();
 })
